@@ -2,46 +2,38 @@ package entity;
 
 import java.io.Serializable;
 
-public class Cars implements Serializable {
+public class AltOrder implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private int id;
-	private int categoryId;
-	private Status status;
-
+	private String  name;
+	private int count;
 	public int getId() {
 		return id;
 	}
-
 	public void setId(int id) {
 		this.id = id;
 	}
-
-	public int getCategoryId() {
-		return categoryId;
+	public String getName() {
+		return name;
 	}
-
-	public void setCategoryId(int category) {
-		this.categoryId = category;
+	public void setName(String name) {
+		this.name = name;
 	}
-
-	public Status getStatus() {
-		return status;
+	public int getCount() {
+		return count;
 	}
-
-	public void setStatus(Status status) {
-		this.status = status;
+	public void setCount(int count) {
+		this.count = count;
 	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + categoryId;
+		result = prime * result + count;
 		result = prime * result + id;
-		result = prime * result + ((status == null) ? 0 : status.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -50,19 +42,23 @@ public class Cars implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Cars other = (Cars) obj;
-		if (categoryId != other.categoryId)
+		AltOrder other = (AltOrder) obj;
+		if (count != other.count)
 			return false;
 		if (id != other.id)
 			return false;
-		if (status != other.status)
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
 			return false;
 		return true;
 	}
-
 	@Override
 	public String toString() {
-		return "Cars [id=" + id + ", categoryId=" + categoryId + ", status=" + status + "]";
+		return "AltOrder [id=" + id + ", name=" + name + ", count=" + count + "]";
 	}
 
+	
+	
 }

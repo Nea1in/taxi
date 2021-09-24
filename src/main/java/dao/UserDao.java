@@ -1,13 +1,10 @@
-package dao.impl;
+package dao;
 
 import entity.Users;
 
-
 public interface UserDao {
-boolean createUser(Users user);
-	
-	int editUser(Users user);
-	
+	boolean createUser(Users user);
+
 	Users getUserByPasswordAndLogin(String password, String login);
 
 }

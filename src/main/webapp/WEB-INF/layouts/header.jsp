@@ -49,7 +49,7 @@
 	%>
 	<div class="alert alert-success alert-dismissible fade show"
 		role="alert">
-		<strong>ERROR!</strong> <% out.print(session.getAttribute("success")); %>
+		<strong>SUCCESS!</strong> <% out.print(session.getAttribute("success")); %>
 		<button type="button" class="close" data-dismiss="alert"
 			aria-label="Close">
 			<span aria-hidden="true">&times;</span>

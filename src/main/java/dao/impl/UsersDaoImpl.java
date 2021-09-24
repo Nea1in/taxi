@@ -1,26 +1,23 @@
 package dao.impl;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Properties;
 
-import javax.servlet.http.HttpSession;
+
 
 import org.apache.commons.codec.digest.DigestUtils;
 
 import entity.ConnectionPool;
-import entity.Roles;
+
 import entity.Users;
+import dao.UserDao;
 
 public class UsersDaoImpl implements UserDao {
 
 	private Connection connection;
-	private QueryExecutor executor = QueryExecutor.getInstance();
 	private String salt;
 
 	/**
@@ -28,9 +25,8 @@ public class UsersDaoImpl implements UserDao {
 	 */
 
 	private static final String FIND_BY_EMAIL_PASSWORD = "SELECT * FROM users WHERE users.email = ? AND users.password = ?";
-	private static final String CREATE_USER = "INSERT INTO users (login, password, email, role_id) VALUES(?, ?, ?, ?)";
-	private static final String UPDATE_USER = "UPDATE users SET password = ?, email = ? WHERE id = ?";
-
+	private static final String CREATE_USER = "insert into users(login, password, email) values(?,?,?)";
+	private static final String ALL_EMAIL = "select * from users where email = ?";
 
 
 	public UsersDaoImpl() {
@@ -48,7 +44,7 @@ public class UsersDaoImpl implements UserDao {
 		try {
 			PreparedStatement pr = null;
 			ResultSet rs = null;
-			pr = connection.prepareStatement("select * from users where email = ?");
+			pr = connection.prepareStatement(ALL_EMAIL);
 			
 			pr.setString(1, entity.getEmail());
 			
@@ -74,16 +70,9 @@ public class UsersDaoImpl implements UserDao {
 
 	public boolean createUser(Users entity) {
 
-		/*
-		 * Object[] args = { entity.getLogin(), entity.getPassword(), entity.getEmail(),
-		 * entity.getRoleId() }; return executor.executeStatement(CREATE_USER, args);
-		 */
-
-		// Connection con = getConnection();
-
 		try {
 			PreparedStatement pr = null;
-			pr = connection.prepareStatement("insert into users(login, password, email) values(?,?,?)");
+			pr = connection.prepareStatement(CREATE_USER);
 			
 			pr.setString(1, entity.getLogin());
 			pr.setString(2, DigestUtils.md5Hex(entity.getPassword()));
@@ -164,9 +153,4 @@ public class UsersDaoImpl implements UserDao {
 		return user;
 	}
 
-	@Override
-	public int editUser(Users user) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 }
