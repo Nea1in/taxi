@@ -38,7 +38,7 @@
   </servlet-mapping>
      <servlet-mapping>
      	<servlet-name>AdminServlet</servlet-name>
-     	<url-pattern>/AdminServlet</url-pattern>
+     	<url-pattern>/AdminServlet/*</url-pattern>
      </servlet-mapping>
      <servlet-mapping>
      	<servlet-name>OrderServlet</servlet-name>

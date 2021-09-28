@@ -19,10 +19,13 @@ import dao.CarDao;
 import dao.impl.CarDaoImpl;
 import dao.impl.CategoryDaoImpl;
 import dao.impl.OrderDaoImpl;
+import dao.impl.UsersDaoImpl;
 import entity.AltOrder;
 import entity.Cars;
 import entity.Categories;
 import entity.Orders;
+import entity.OrdersForAdmin;
+import entity.Users;
 
 /**
  * Servlet implementation class OrderServlet
@@ -57,11 +60,15 @@ public class OrderServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		if (getAuth(request, response)) {
+			request.setAttribute("base_url", request.getContextPath());
 			HttpSession session = request.getSession();
 			String[] action = request.getRequestURL().toString().split("/");
+			System.out.println(request.getRequestURL());
+			System.out.println(action[action.length - 1]);
 			
 			System.out.println("xdbsrbsrnbs - " + request.getRequestURL().toString());
 			String path_proj = request.getContextPath();
+			request.setAttribute("url_base", request.getContextPath());
 			if (action[action.length - 1].equals("reject")) {
 				System.out.println(request.getParameter("order_id"));
 				OrderDaoImpl order =new OrderDaoImpl();
@@ -78,6 +85,43 @@ public class OrderServlet extends HttpServlet {
 				int count =Integer.parseInt(request.getParameter("count"));
 				car.updateCar(Integer.parseInt(request.getParameter("category_id")), count);
 				response.sendRedirect(path_proj);
+			} else if (action[action.length - 1].equals("history")){
+				
+				if (request.getParameter("page") == null) {
+					session.setAttribute("page", 0);
+				} else {
+					session.setAttribute("page", request.getParameter("page"));
+				}
+				if (request.getParameter("sort_date") != null) {
+					session.setAttribute("sort_date", request.getParameter("sort_date"));
+				} else {
+					session.removeAttribute("sort_date");
+				}
+				if (request.getParameter("sort_price") != null) {
+					session.setAttribute("sort_price", request.getParameter("sort_price"));
+				} else {
+					session.removeAttribute("sort_price");
+				}
+				session.setAttribute("user_id", session.getAttribute("user"));
+				if (request.getParameter("date") != null  && !request.getParameter("date").equals("")) {
+					session.setAttribute("date", request.getParameter("date"));
+				} else {
+					session.removeAttribute("date");
+				}
+				OrderDaoImpl order = new OrderDaoImpl();
+				int count = order.getAllOrdersCount(request);
+				List<OrdersForAdmin> listOrders = new ArrayList<OrdersForAdmin>();
+				
+				UsersDaoImpl user = new UsersDaoImpl();
+				
+				List<Users> listUsers = new ArrayList<Users>();
+				listUsers.addAll(user.getAllUsers());
+				listOrders.addAll(order.getOrdersAdmin(request));
+				request.setAttribute("listOrders",listOrders);
+				request.setAttribute("count",count);
+				request.setAttribute("users",listUsers);
+				request.setAttribute("url", request.getContextPath() + "/OrderServlet/history");
+				request.getRequestDispatcher("/WEB-INF/view/history-user.jsp").forward(request, response);
 			} else {
 				CategoryDaoImpl category = new CategoryDaoImpl();
 				List<Categories> categories = new ArrayList<Categories>();
@@ -105,6 +149,7 @@ public class OrderServlet extends HttpServlet {
 		
 		if (action[action.length - 1].equals("create")) {
 			HttpSession session = request.getSession();
+		
 	    	int userId = (int) session.getAttribute("user");
 	    	String from = request.getParameter("from");
 	    	
@@ -113,6 +158,7 @@ public class OrderServlet extends HttpServlet {
 	    	Integer categoryId = Integer.parseInt(request.getParameter("categoryId"));
 	    	int status = 0;
 	    	OrderDaoImpl neworder = new OrderDaoImpl();
+	    	
 	    	Orders order = new Orders(userId, from, to, passenger, categoryId, status);
 	    	neworder.createOrder(order);
 	    	Integer id = neworder.getLastOrderId();
@@ -134,7 +180,7 @@ public class OrderServlet extends HttpServlet {
 				order_det.put("order_id", id.toString());
 				order_det.put("url", request.getContextPath());
 				//System.out.println("FFFFFFFFFFFFFFFFF" + neworder.findCar(order.getCategoryId(), order.getPassenger()));
-				System.out.println("YYYYYYYYYYYYY");
+			
 				request.setAttribute("order_det", order_det);
 	    	} else {
 	    		
@@ -147,7 +193,7 @@ public class OrderServlet extends HttpServlet {
 	    		List<AltOrder> categories = new ArrayList<AltOrder>();
 	    	//	HashMap<String, String> categories = new HashMap<String, String>();
 	    		categories =  neworder.findCar(order.getCategoryId(), order.getPassenger());
-	    		System.out.print("DDDDDDD" + neworder);
+	    		
 	    		if (categories.equals(null)) {
 	    			// Error
 	    		} else {
@@ -171,7 +217,7 @@ public class OrderServlet extends HttpServlet {
 	}
 	
 	protected void create(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("kagcugwicg");
+	
 	}
 
 }

@@ -1,8 +1,8 @@
 <jsp:include page="/WEB-INF/layouts/header.jsp"/>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<h1>ADMIN</h1>
-<form method="GET" action="${url}">
+<h1>MY HISTORY</h1>
+<form method="GET" action="${url}/order/history">
 <div class="row m-3">
 	<div>
 	<%
@@ -18,17 +18,6 @@
 	    }
 	%>
 	</div>
-	
-	<div class="col-md-8">
-		<label for="category_id">User</label>
-		<select class="form-control" name="user_id">	
-				<option value=null>Selected ...</option>
-			<c:forEach items="${users}" var="user">
-								
-				<option value=${ user.id }>${ user.email }</option>
-			</c:forEach>
-		</select>
-	</div>
 	<div class="col-md-4">
 		<div class="form-group">
 			<label for="to">Date</label> <input type="date"
@@ -39,7 +28,7 @@
 	<div class="col-md-12">
 		<button class="float-left btn btn-success" type="submit"> Filter
 		</button>
-		<a class="float-right btn btn-light" href="${url}"> Reset
+		<a class="float-right btn btn-light" href="${url}/order/history"> Reset
 		</a>
 	</div>
 </div>

@@ -5,13 +5,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
 import entity.ConnectionPool;
-
+import entity.Orders;
 import entity.Users;
 import dao.UserDao;
 
@@ -28,7 +29,7 @@ public class UsersDaoImpl implements UserDao {
 	private static final String CREATE_USER = "insert into users(login, password, email) values(?,?,?)";
 	private static final String ALL_EMAIL = "select * from users where email = ?";
 
-
+	private static final String ALL_USERS = "select * from users where users.role_id = 2;";
 	public UsersDaoImpl() {
 
         try {
@@ -130,13 +131,41 @@ public class UsersDaoImpl implements UserDao {
 		return null;
 			
 	}
-
+	
+	/*public List<Users> getAllUsers(){
+		Users user = null;
+		PreparedStatement pr = null;
+		ResultSet rs = null;
+		
+	}*/
 	/**
 	 * Creates entity from result set
 	 * 
 	 * @param rs
 	 * @return entity
 	 */
+	
+	
+	public List<Users> getAllUsers() {
+		List<Users> users = new ArrayList<Users>();
+		Users user = null;
+		try {
+			System.out.println(connection);
+			Statement statement = connection.createStatement();
+			ResultSet rs = statement.executeQuery(ALL_USERS);
+			while (rs.next()) {
+				user = createEntity(rs);
+				users.add(user);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return users;
+	}
+	
+	
 	private Users createEntity(ResultSet rs) {
 		Users user = new Users();
 		

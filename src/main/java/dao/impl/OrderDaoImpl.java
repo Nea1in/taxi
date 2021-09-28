@@ -7,22 +7,30 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import dao.OrderDao;
 import entity.AltOrder;
 import entity.Categories;
 import entity.ConnectionPool;
 import entity.Orders;
+import entity.OrdersForAdmin;
+
+
 
 public class OrderDaoImpl implements OrderDao {
 
 	private Connection connection;
 
-	private static final String CREATE_ORDER = "insert into orders (user_id, `from`, `to`, passenger, category_id, price ,`status`) values(?,?,?,?,?,?,?)";
+	private static final String CREATE_ORDER = "insert into orders (user_id, `from`, `to`, passenger, category_id, price ,`status`,date) values(?,?,?,?,?,?,?,?)";
 	private static final String ALL_ORDER = "SELECT * FROM orders";
+	private static final String COUNT_ORDER = "SELECT COUNT(*) FROM orders";
 	private static final String GET_ID = "SELECT LAST_INSERT_ID()";
 	private static final String CHECK_CATEGORY = "select categories.name from categories\n"
 			+ "left join cars ON categories.id = cars.category_id\n" + "where cars.status = 'ready_to_order' AND\n"
@@ -38,8 +46,17 @@ public class OrderDaoImpl implements OrderDao {
 			+ "            AND categories.id <> ?\n" + "			group by categories.name;";
 	private static final String DELETE_ORDER = "DELETE FROM orders WHERE id = ?";
 	private static final String ALL_ORDER_WITH_ID = "SELECT * FROM orders\n" + "			WHERE id = ?;";
-	private static final String SORTED_ORDER = "SELECT * FROM orders \n" + "order by ? ?;";
+	private static final String SORTED_ORDER = "select users.login,users.email,orders.from, orders.to , orders.passenger,categories.name,orders.date,orders.price,orders.status,orders.user_id from orders\n" + 
+			"					left join users ON orders.user_id = users.id\n" + 
+			"					join categories ON orders.category_id = categories.id\n" + 
+			"						where users.role_id = 2\n";
 
+	private static final String FindOrder ="select users.login,users.email,orders.from, orders.to , orders.passenger,categories.name,orders.date,orders.price,orders.status from orders\n" + 
+			"					left join users ON orders.user_id = users.id\n" + 
+			"					join categories ON orders.category_id = categories.id\n" + 
+			"						where ? = ? \n" + 
+			"                        order by ? ?\n" + 
+			"						;";
 	public OrderDaoImpl() {
 
 		try {
@@ -50,30 +67,111 @@ public class OrderDaoImpl implements OrderDao {
 		}
 	}
 
-/*	public List<Orders> getOrdersSorted(String fild,String order) {
-		List<Orders> orders = new ArrayList<Orders>();
-		Orders order = null;
+	public List<OrdersForAdmin>  getFindOrders(String field,String value,String fild,String order) {
+		List<OrdersForAdmin> orders = new ArrayList<OrdersForAdmin>();
+	
 		PreparedStatement pr = null;
-		ResultSet resultSet;
+		ResultSet rs;
+		
 		try {
 			pr = connection.prepareStatement(SORTED_ORDER);
-			pr.setString(1,);
-			pr.setString(2,);
-			resultSet = pr.executeQuery();
-			while (resultSet.next()) {
-				order = createEntity(resultSet);
-				orders.add(order);
+			pr.setString(1,field);
+			pr.setString(2,value);
+			pr.setString(3,fild);
+			pr.setString(4,order);
+			rs = pr.executeQuery();
+			while (rs.next()) {
+				OrdersForAdmin order1 = new OrdersForAdmin();
+				order1.setLogin(rs.getString(1));
+				order1.setEmail(rs.getString(2));
+				order1.setFrom(rs.getString(3));
+				order1.setTo(rs.getString(4));
+				order1.setPassenger(rs.getInt(5));
+				order1.setNameCategory(rs.getString(6));
+				order1.setDate(rs.getDate(7));
+				order1.setPrice(rs.getBigDecimal(8));
+				order1.setStatus(rs.getInt(9));
+				order1.setUserId(rs.getInt(10));
+				orders.add(order1);
+				
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println();
 
 		return orders;
-	}*/
+	}
+
+	
+	public List<OrdersForAdmin>  getOrdersAdmin(HttpServletRequest request) {
+		List<OrdersForAdmin> orders = new ArrayList<OrdersForAdmin>();
+		
+		PreparedStatement pr = null;
+		ResultSet rs;
+		
+		try {
+			HttpSession session = request.getSession();
+			
+			Integer page = Integer.parseInt(session.getAttribute("page").toString());
+			String sql_str = SORTED_ORDER;
+			String sql_order = null;
+			String sql_where = "";
+			if (session.getAttribute("user_id") != null) {
+				sql_where = " AND orders.user_id=" + session.getAttribute("user_id");
+			}
+
+			if (session.getAttribute("date") != null) {
+				sql_where += " AND orders.date='" + session.getAttribute("date") + "'";
+			}
+			sql_str += sql_where;
+			
+			if (session.getAttribute("sort_price") != null) {
+				sql_order = "orders.price " + session.getAttribute("sort_price");
+		    }
+		    if (session.getAttribute("sort_date") != null) {
+		    	if (sql_order != null) {
+		    		sql_order += ", date " + session.getAttribute("sort_date");
+		    	} else {
+		    		sql_order = "orders.date " + session.getAttribute("sort_date");
+		    	}
+		    }
+		    if (sql_order != null) {
+		    	sql_str += " ORDER BY " + sql_order + " ";
+		    }
+			sql_str += " LIMIT " + page*5 + ", 5;";
+			System.out.println(sql_str);
+			pr = connection.prepareStatement(sql_str);
+//			pr.setString(1,fild);
+//			pr.setString(2,order);
+			rs = pr.executeQuery();
+			while (rs.next()) {
+				OrdersForAdmin order1 = new OrdersForAdmin();
+				order1.setLogin(rs.getString(1));
+				order1.setEmail(rs.getString(2));
+				order1.setFrom(rs.getString(3));
+				order1.setTo(rs.getString(4));
+				order1.setPassenger(rs.getInt(5));
+				order1.setNameCategory(rs.getString(6));
+				order1.setDate(rs.getDate(7));
+				order1.setPrice(rs.getBigDecimal(8));
+				order1.setStatus(rs.getInt(9));
+				order1.setUserId(rs.getInt(10));
+				orders.add(order1);
+				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return orders;
+	}
 
 	public boolean createOrder(Orders entity) {
-
+		java.util.Date utilDate = new java.util.Date();
+	    java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 		try {
 			PreparedStatement pr = null;
 			pr = connection.prepareStatement(CREATE_ORDER);
@@ -85,6 +183,7 @@ public class OrderDaoImpl implements OrderDao {
 			pr.setInt(5, entity.getCategoryId());
 			pr.setBigDecimal(6, entity.getPrice());
 			pr.setInt(7, entity.getStatus());
+			pr.setDate(8, sqlDate);
 			pr.executeUpdate();
 
 		} catch (SQLException e) {
@@ -240,6 +339,40 @@ public class OrderDaoImpl implements OrderDao {
 		return true;
 	}
 
+	
+	public int getAllOrdersCount(HttpServletRequest request) {
+		int count =0;
+		HttpSession session = request.getSession();
+		try {
+			
+			Statement statement = connection.createStatement();
+			String sql_str = COUNT_ORDER;
+			String sql_where = null;
+			if (session.getAttribute("user_id") != null) {
+				sql_where = "user_id=" + session.getAttribute("user_id");
+			}
+			if (session.getAttribute("date") != null) {
+				if (sql_where != null) {
+					sql_where += " AND date=" + session.getAttribute("date");
+				} else {
+					sql_where += "date=" + session.getAttribute("date");
+				}
+			}
+			if (sql_where != null) {
+				sql_str += " WHERE " + sql_where;
+			}
+			ResultSet resultSet = statement.executeQuery(sql_str);
+			while (resultSet.next()) {
+				count = resultSet.getInt(1);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return count;
+	}
+	
 	public List<Orders> getAllOrders() {
 		List<Orders> orders = new ArrayList<Orders>();
 		Orders order = null;
@@ -278,5 +411,7 @@ public class OrderDaoImpl implements OrderDao {
 		}
 		return order;
 	}
+
+	
 
 }

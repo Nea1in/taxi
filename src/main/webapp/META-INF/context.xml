@@ -10,6 +10,8 @@
    maxActive="100"
    maxIdle="30" 
    maxWait="10000"
+   maxWaitMillis="10000"
+   maxTotal="100"
    driverClassName="com.mysql.jdbc.Driver"
             url="jdbc:mysql://localhost:3306/service_taxi?useUnicode=yes"
        />
