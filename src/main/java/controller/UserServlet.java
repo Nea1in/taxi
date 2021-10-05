@@ -4,7 +4,11 @@ package controller;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Enumeration;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,6 +20,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import dao.impl.UsersDaoImpl;
 import entity.Users;
+import entity.VerifyUtils;
 
 /**
  * Servlet implementation class HomeServlet
@@ -26,6 +31,7 @@ import entity.Users;
 public class UserServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private String path_proj;
+    
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -49,6 +55,8 @@ public class UserServlet extends HttpServlet {
     	 String[] action = request.getRequestURL().toString().split("/");
     	 HttpSession session = request.getSession();
     	 
+    	 
+    	
 
     	 if (action[action.length - 1].equals("log_out")) {
     		 session.removeAttribute("user");
@@ -56,6 +64,11 @@ public class UserServlet extends HttpServlet {
     		 response.sendRedirect(path_proj);
     	 }
     	 
+    	 
+    	 if(session.getAttribute("language")!=null) {
+    	 
+    	  
+    	 }
     	 if (session.getAttribute("user") != null && path.equals("/")) {
     		 if (session.getAttribute("role").equals(1)) {
     			 response.sendRedirect(path_proj + "/admin");
@@ -74,9 +87,16 @@ public class UserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // TODO Auto-generated method stub
     	 
+    	//ResourceBundle bundleDefault = ResourceBundle.getBundle("	");
+    	
+    	
     	
     	String[] action = request.getRequestURL().toString().split("/");
     	HttpSession session = request.getSession();
+    	
+    	
+    	
+    	
     	if (action[action.length - 1].equals("sign_up")) {
     		// Registration
     		String login =null;
@@ -120,6 +140,7 @@ public class UserServlet extends HttpServlet {
     		}
     		session.setAttribute("user", user.getId());
     		session.setAttribute("role", user.getRoleId());
+    		
     		response.sendRedirect(path_proj);
 //    		request.getRequestDispatcher("/WEB-INF/view/index.jsp").forward(request, response);
     	} else {

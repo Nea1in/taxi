@@ -51,12 +51,6 @@ public class OrderDaoImpl implements OrderDao {
 			"					join categories ON orders.category_id = categories.id\n" + 
 			"						where users.role_id = 2\n";
 
-	private static final String FindOrder ="select users.login,users.email,orders.from, orders.to , orders.passenger,categories.name,orders.date,orders.price,orders.status from orders\n" + 
-			"					left join users ON orders.user_id = users.id\n" + 
-			"					join categories ON orders.category_id = categories.id\n" + 
-			"						where ? = ? \n" + 
-			"                        order by ? ?\n" + 
-			"						;";
 	public OrderDaoImpl() {
 
 		try {
@@ -67,43 +61,7 @@ public class OrderDaoImpl implements OrderDao {
 		}
 	}
 
-	public List<OrdersForAdmin>  getFindOrders(String field,String value,String fild,String order) {
-		List<OrdersForAdmin> orders = new ArrayList<OrdersForAdmin>();
 	
-		PreparedStatement pr = null;
-		ResultSet rs;
-		
-		try {
-			pr = connection.prepareStatement(SORTED_ORDER);
-			pr.setString(1,field);
-			pr.setString(2,value);
-			pr.setString(3,fild);
-			pr.setString(4,order);
-			rs = pr.executeQuery();
-			while (rs.next()) {
-				OrdersForAdmin order1 = new OrdersForAdmin();
-				order1.setLogin(rs.getString(1));
-				order1.setEmail(rs.getString(2));
-				order1.setFrom(rs.getString(3));
-				order1.setTo(rs.getString(4));
-				order1.setPassenger(rs.getInt(5));
-				order1.setNameCategory(rs.getString(6));
-				order1.setDate(rs.getDate(7));
-				order1.setPrice(rs.getBigDecimal(8));
-				order1.setStatus(rs.getInt(9));
-				order1.setUserId(rs.getInt(10));
-				orders.add(order1);
-				
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println();
-
-		return orders;
-	}
-
 	
 	public List<OrdersForAdmin>  getOrdersAdmin(HttpServletRequest request) {
 		List<OrdersForAdmin> orders = new ArrayList<OrdersForAdmin>();
@@ -143,8 +101,6 @@ public class OrderDaoImpl implements OrderDao {
 			sql_str += " LIMIT " + page*5 + ", 5;";
 			System.out.println(sql_str);
 			pr = connection.prepareStatement(sql_str);
-//			pr.setString(1,fild);
-//			pr.setString(2,order);
 			rs = pr.executeQuery();
 			while (rs.next()) {
 				OrdersForAdmin order1 = new OrdersForAdmin();
