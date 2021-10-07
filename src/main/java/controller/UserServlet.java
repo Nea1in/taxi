@@ -2,25 +2,14 @@ package controller;
 
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Enumeration;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.apache.commons.codec.digest.DigestUtils;
-
 import dao.impl.UsersDaoImpl;
 import entity.Users;
-import entity.VerifyUtils;
 
 /**
  * Servlet implementation class HomeServlet
@@ -65,10 +54,7 @@ public class UserServlet extends HttpServlet {
     	 }
     	 
     	 
-    	 if(session.getAttribute("language")!=null) {
-    	 
-    	  
-    	 }
+   
     	 if (session.getAttribute("user") != null && path.equals("/")) {
     		 if (session.getAttribute("role").equals(1)) {
     			 response.sendRedirect(path_proj + "/admin");
@@ -137,11 +123,12 @@ public class UserServlet extends HttpServlet {
     		if (user == null) {
     			session.setAttribute("error", "Incorrect user or password");
     			response.sendRedirect(path_proj);
-    		}
+    		}else {
     		session.setAttribute("user", user.getId());
     		session.setAttribute("role", user.getRoleId());
-    		
     		response.sendRedirect(path_proj);
+    		}
+    		
 //    		request.getRequestDispatcher("/WEB-INF/view/index.jsp").forward(request, response);
     	} else {
         	response.sendError(404);

@@ -59,7 +59,7 @@
          </form>
  
   <%
- System.out.print(session.getAttribute("language"));
+
  Locale uk = null;
  
  if (session.getAttribute("language").equals("ua")){

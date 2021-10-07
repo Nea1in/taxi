@@ -59,14 +59,12 @@ public class UsersDaoImpl implements UserDao {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			try {
-				connection.close();
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			
 			return true;
 		}
+		
+		
+		
 	}
 
 	public boolean createUser(Users entity) {
@@ -93,12 +91,7 @@ public class UsersDaoImpl implements UserDao {
 			return false;
 
 		}
-		try {
-			connection.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		return true;
 
 	}
@@ -115,29 +108,27 @@ public class UsersDaoImpl implements UserDao {
 				pr.setString(2, DigestUtils.md5Hex(password));
 				
 				rs = pr.executeQuery();
-				System.out.println(rs);
-				
 				if (rs.next()) {
-					System.out.println("find");
-					System.out.println(rs.getInt(1));
 					return user = createEntity(rs);
 				}	
-				System.out.println("no");
+				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			try {
+				connection.close();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
 		}
 		return null;
 			
 	}
 	
-	/*public List<Users> getAllUsers(){
-		Users user = null;
-		PreparedStatement pr = null;
-		ResultSet rs = null;
-		
-	}*/
+	
 	/**
 	 * Creates entity from result set
 	 * 
@@ -150,7 +141,6 @@ public class UsersDaoImpl implements UserDao {
 		List<Users> users = new ArrayList<Users>();
 		Users user = null;
 		try {
-			System.out.println(connection);
 			Statement statement = connection.createStatement();
 			ResultSet rs = statement.executeQuery(ALL_USERS);
 			while (rs.next()) {
@@ -160,6 +150,12 @@ public class UsersDaoImpl implements UserDao {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		try {
+			connection.close();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 
 		return users;

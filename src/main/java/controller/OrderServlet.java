@@ -5,23 +5,18 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import dao.CarDao;
 import dao.impl.CarDaoImpl;
 import dao.impl.CategoryDaoImpl;
 import dao.impl.OrderDaoImpl;
 import dao.impl.UsersDaoImpl;
 import entity.AltOrder;
-import entity.Cars;
+
 import entity.Categories;
 import entity.Orders;
 import entity.OrdersForAdmin;
@@ -63,14 +58,13 @@ public class OrderServlet extends HttpServlet {
 			request.setAttribute("base_url", request.getContextPath());
 			HttpSession session = request.getSession();
 			String[] action = request.getRequestURL().toString().split("/");
-			System.out.println(request.getRequestURL());
-			System.out.println(action[action.length - 1]);
 			
-			System.out.println("xdbsrbsrnbs - " + request.getRequestURL().toString());
+			
+			
 			String path_proj = request.getContextPath();
 			request.setAttribute("url_base", request.getContextPath());
 			if (action[action.length - 1].equals("reject")) {
-				System.out.println(request.getParameter("order_id"));
+				
 				OrderDaoImpl order =new OrderDaoImpl();
 				order.deleteOrder( Integer.parseInt(request.getParameter("order_id")));
 				session.setAttribute("success", "Order reject.");
@@ -78,7 +72,7 @@ public class OrderServlet extends HttpServlet {
 			} else if (action[action.length - 1].equals("approval")) {
 				OrderDaoImpl order =new OrderDaoImpl();
 				BigDecimal price= new BigDecimal(request.getParameter("price"));
-				System.out.print("PRICE PRICE PRICE"+ price);
+				
 				order.updateOrder( Integer.parseInt(request.getParameter("order_id")),  Integer.parseInt(request.getParameter("category_id")), 1, price);
 				session.setAttribute("success", "Order confirmed. Weating 15 minutes");
 				CarDaoImpl car = new CarDaoImpl();
@@ -179,19 +173,13 @@ public class OrderServlet extends HttpServlet {
 				order_det.put("category_id",categoryId.toString());
 				order_det.put("order_id", id.toString());
 				order_det.put("url", request.getContextPath());
-				//System.out.println("FFFFFFFFFFFFFFFFF" + neworder.findCar(order.getCategoryId(), order.getPassenger()));
 			
 				request.setAttribute("order_det", order_det);
 	    	} else {
 	    		
-	    	/*	CategoryDaoImpl category = new CategoryDaoImpl();
-				List<Categories> categories = new ArrayList<Categories>();
-				categories = category.getAllCategories();
-				request.setAttribute("categories", categories);*/
-	    		
+	    	
 	    		
 	    		List<AltOrder> categories = new ArrayList<AltOrder>();
-	    	//	HashMap<String, String> categories = new HashMap<String, String>();
 	    		categories =  neworder.findCar(order.getCategoryId(), order.getPassenger());
 	    		
 	    		if (categories.equals(null)) {

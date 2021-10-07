@@ -7,17 +7,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import dao.OrderDao;
 import entity.AltOrder;
-import entity.Categories;
 import entity.ConnectionPool;
 import entity.Orders;
 import entity.OrdersForAdmin;
@@ -99,7 +93,7 @@ public class OrderDaoImpl implements OrderDao {
 		    	sql_str += " ORDER BY " + sql_order + " ";
 		    }
 			sql_str += " LIMIT " + page*5 + ", 5;";
-			System.out.println(sql_str);
+			
 			pr = connection.prepareStatement(sql_str);
 			rs = pr.executeQuery();
 			while (rs.next()) {
@@ -249,7 +243,7 @@ public class OrderDaoImpl implements OrderDao {
 				order.setCount(1);
 				orders.add(order);
 			}
-			System.out.println(orders);
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -332,8 +326,7 @@ public class OrderDaoImpl implements OrderDao {
 	public List<Orders> getAllOrders() {
 		List<Orders> orders = new ArrayList<Orders>();
 		Orders order = null;
-		try {
-			System.out.println(connection);
+		try {		
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(ALL_ORDER);
 			while (resultSet.next()) {

@@ -1,7 +1,7 @@
 package dao.impl;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -29,7 +29,6 @@ public class CategoryDaoImpl implements CategoryDao {
 		List<Categories> categories = new ArrayList<Categories>();
 		Categories category = null;
 		try {
-			System.out.println(connection);
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(ALL_CATEGORY);
 			// System.out.println(resultSet);

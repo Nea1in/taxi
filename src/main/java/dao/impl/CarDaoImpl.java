@@ -10,15 +10,14 @@ import java.util.List;
 
 import dao.CarDao;
 import entity.Cars;
-import entity.Categories;
 import entity.ConnectionPool;
 import entity.Status;
 
 public class CarDaoImpl implements CarDao {
 	private Connection connection;
 	private static final String ALL_CARS = "SELECT * FROM cars";
-	private static final String UPDATE_CAR ="UPDATE cars SET status = ? WHERE category_id = ? LIMIT ?";
-	
+	private static final String UPDATE_CAR = "UPDATE cars SET status = ? WHERE status = ? AND category_id = ? LIMIT ?";
+
 	public CarDaoImpl() {
 		try {
 
@@ -27,34 +26,35 @@ public class CarDaoImpl implements CarDao {
 			e.getMessage();
 		}
 	}
-	
-	public boolean updateCar(int categoryId,int limit) {
+
+	public boolean updateCar(int categoryId, int limit) {
 		PreparedStatement ps = null;
-		 try {
+		try {
 			ps = connection.prepareStatement(UPDATE_CAR);
-			ps.setString(1,"execute_order");
-			ps.setInt(2,categoryId);
-			ps.setInt(3,limit);
+			ps.setString(1, "execute_order");
+			ps.setString(2, "ready_to_order");
+			ps.setInt(3, categoryId);
+			ps.setInt(4, limit);
 			if (ps.executeUpdate() != 1) {
-                return false;
-            }
-			
+				return false;
+			}
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
+		
 		return true;
 	}
-	
+
 	public List<Cars> getAllCars() {
 		List<Cars> cars = new ArrayList<Cars>();
 		Cars car = null;
 		try {
-			System.out.println(connection);
+
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(ALL_CARS);
-			// System.out.println(resultSet);
 			while (resultSet.next()) {
 				car = createEntity(resultSet);
 				cars.add(car);
@@ -63,7 +63,7 @@ public class CarDaoImpl implements CarDao {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
 		return cars;
 	}
 

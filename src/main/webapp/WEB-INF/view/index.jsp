@@ -4,17 +4,6 @@
      <script src="https://www.google.com/recaptcha/api.js"></script>
      <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
      <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-     
-     
-     
-     
-
-   
-
-
-     
-     
-     
     <div class="row">
         <div class="col-md-2"></div>
         <div class="col-md-4 bg-light m-3 rounded-lg">
@@ -28,8 +17,6 @@
                     <label for="password">${Password}</label>
                     <input type="password" class="form-control" name="password">
                 </div>
-                <div class="g-recaptcha"
-          data-sitekey="6Ld1OaocAAAAAMC0rh2ipJ9aZznoLVkuCMuL6niw"></div>
                 <button type="submit" class="btn btn-primary">${Sign_in}</button>
             </form>
         </div>

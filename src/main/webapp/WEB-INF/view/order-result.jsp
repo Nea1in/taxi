@@ -16,6 +16,7 @@
 			<p> <b> Car's category: </b> ${ order_det.category} </p>
 			<p> <b> Price: </b> ${ order_det.price} </p>
 			<a class="btn btn-success w-100 mt-3 mb-3" href="${order_det.url}/OrderServlet/approval?order_id=${order_det.order_id}&category_id=${order_det.category_id}&price=${order_det.price}&count=1">Apply</a>
+			<a class="btn btn-danger w-100 mt-3 mb-3" href="${order_det.url}/OrderServlet/reject?order_id=${order_det.order_id}">Reject</a>
 			<%
 				} else {
 			
@@ -55,10 +56,11 @@
 					</c:forEach>
 				</tbody>
 			</table>
+			<a class="btn btn-danger w-100 mt-3 mb-3" href="${order_alt.url}/OrderServlet/reject?order_id=${order_alt.order_id}">Reject</a>
 			<%
 				}
 			%>
-			<a class="btn btn-danger w-100 mt-3 mb-3" href="${order_det.url}/OrderServlet/reject?order_id=${order_det.order_id}">Reject</a>
+			
 		</div>
 	</div>
 
